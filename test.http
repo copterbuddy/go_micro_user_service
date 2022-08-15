@@ -1,0 +1,14 @@
+### GetAllUser
+
+GET http://localhost:8080/UserApi/GetAllUser
+
+### CreateUser
+
+POST  http://localhost:8080/UserApi/CreateUser
+Content-Type: application/json
+
+{
+    "email":"cop@test.com",
+    "password":"1234",
+    "name":"cop"
+}
