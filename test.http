@@ -8,7 +8,17 @@ POST  http://localhost:8080/UserApi/CreateUser
 Content-Type: application/json
 
 {
-    "email":"cop@test.com",
+    "email":"cop1@test.com",
     "password":"1234",
-    "name":"cop"
+    "name":"cop1"
+}
+
+### Login
+
+POST  http://localhost:8080/UserApi/Login
+Content-Type: application/json
+
+{
+    "email":"cop1@test.com",
+    "password":"1234"
 }

@@ -1,11 +1,9 @@
 package service
 
-type UserResponse struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
-}
+import "main/model"
 
 type UserService interface {
-	Create(email string, password string, name string) (UserResponse, error)
-	GetAll() ([]UserResponse, error)
+	Create(email string, password string, name string) (user *model.UserResponse, err error)
+	GetAll() (users []model.UserResponse, err error)
+	Login(model.LoginRequest) (res *model.LoginResponse, err error)
 }

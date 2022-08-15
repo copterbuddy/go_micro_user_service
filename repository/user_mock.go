@@ -21,3 +21,18 @@ func (m *userRepositoryMock) Create(email string, password string, name string) 
 	args := m.Called()
 	return args.Get(0).(*User), args.Error(1)
 }
+
+func (m *userRepositoryMock) Login() (*User, error) {
+	args := m.Called()
+	return args.Get(0).(*User), args.Error(1)
+}
+
+func (m *userRepositoryMock) GetUserByID(userID uint) (*User, error) {
+	args := m.Called()
+	return args.Get(0).(*User), args.Error(1)
+}
+
+func (m *userRepositoryMock) GetUserByEmail(email string) (*User, error) {
+	args := m.Called()
+	return args.Get(0).(*User), args.Error(1)
+}

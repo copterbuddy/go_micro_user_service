@@ -3,6 +3,7 @@ package handler_test
 import (
 	"encoding/json"
 	"main/handler"
+	"main/model"
 	"main/repository"
 	"main/service"
 	"net/http"
@@ -30,7 +31,7 @@ func Test_User_GetallUser_Success(t *testing.T) {
 		},
 	}
 
-	expedted_mock := []service.UserResponse{
+	expedted_mock := []model.UserResponse{
 		{
 			Email: "cop1@test.com",
 			Name:  "Cop1",
@@ -58,7 +59,7 @@ func Test_User_GetallUser_Success(t *testing.T) {
 		w := httptest.NewRecorder()
 		app.ServeHTTP(w, req)
 
-		users := []service.UserResponse{}
+		users := []model.UserResponse{}
 		json.Unmarshal(w.Body.Bytes(), &users)
 		// logs.Info("coptest : " + users)
 

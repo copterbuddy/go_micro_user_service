@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"main/model"
 	"main/repository"
 	"main/service"
 	"testing"
@@ -26,7 +27,7 @@ func Test_User_GetAll_Success(t *testing.T) {
 		},
 	}
 
-	expected_mock := []service.UserResponse{
+	expected_mock := []model.UserResponse{
 		{
 			Email: "cop1@test.com",
 			Name:  "Cop1",

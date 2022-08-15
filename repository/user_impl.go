@@ -22,7 +22,7 @@ func (r userRepositoryDB) Create(email string, password string, name string) (*U
 	// 	password,
 	// 	name,
 	// )
-	user := User{
+	user := &User{
 		Email:    email,
 		Password: password,
 		Name:     name,
@@ -34,7 +34,7 @@ func (r userRepositoryDB) Create(email string, password string, name string) (*U
 
 	id := user.ID
 
-	user, err := r.getUserByID(id)
+	user, err := r.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (r userRepositoryDB) Create(email string, password string, name string) (*U
 	// 	Name:     name,
 	// }
 
-	return &user, nil
+	return user, nil
 }
 
 func (r userRepositoryDB) GetAll() ([]User, error) {
@@ -60,12 +60,27 @@ func (r userRepositoryDB) GetAll() ([]User, error) {
 	return users, nil
 }
 
-func (r userRepositoryDB) getUserByID(userID uint) (User, error) {
+func (r userRepositoryDB) Login() (*User, error) {
 
-	user := User{}
-	tx := r.db.First(&user, userID)
+	return nil, nil
+}
+
+func (r userRepositoryDB) GetUserByID(userID uint) (*User, error) {
+
+	user := &User{}
+	tx := r.db.First(user, userID)
 	if tx.Error != nil {
-		return user, tx.Error
+		return nil, tx.Error
+	}
+	return user, nil
+}
+
+func (r userRepositoryDB) GetUserByEmail(email string) (*User, error) {
+
+	user := &User{}
+	tx := r.db.First(user, "email = ?", email)
+	if tx.Error != nil {
+		return nil, tx.Error
 	}
 	return user, nil
 }

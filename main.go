@@ -31,6 +31,7 @@ func main() {
 	{
 		testApi.GET("/GetAllUser", userHandler.GetAllUser)
 		testApi.POST("/CreateUser", userHandler.CreateUser)
+		testApi.POST("/Login", userHandler.Login)
 	}
 
 	r.Run(fmt.Sprintf(":%v", viper.GetString("app.port")))

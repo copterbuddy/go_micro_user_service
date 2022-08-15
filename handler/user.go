@@ -2,6 +2,7 @@ package handler
 
 import (
 	"main/logs"
+	"main/model"
 	"main/service"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 type UserHandler interface {
 	GetAllUser(c *gin.Context)
 	CreateUser(c *gin.Context)
+	Login(c *gin.Context)
 }
 
 type userHandler struct {
@@ -28,6 +30,7 @@ func (h userHandler) GetAllUser(c *gin.Context) {
 	if err != nil {
 		logs.Error(err)
 		c.JSON(http.StatusExpectationFailed, "expected error")
+		return
 	}
 
 	c.JSON(http.StatusOK, users)
@@ -36,25 +39,49 @@ func (h userHandler) GetAllUser(c *gin.Context) {
 //http://localhost:8000/UserApi/CreateUser
 func (h userHandler) CreateUser(c *gin.Context) {
 
-	req := CreateUserReq{}
-	res := service.UserResponse{}
+	req := model.CreateUserRequest{}
+	res := &model.UserResponse{}
 	var err error
 
 	if c.ShouldBind(&req) == nil {
+
 		res, err = h.userService.Create(req.Email, req.Password, req.Name)
 		if err != nil {
 			logs.Error(err)
 			c.JSON(401, gin.H{"status": "cannot create"})
+			return
 		}
 	} else {
 		c.JSON(401, gin.H{"status": "unable to bind data"})
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
 }
 
-type CreateUserReq struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Name     string `json:"name"`
+func (h userHandler) Login(c *gin.Context) {
+
+	req := model.LoginRequest{}
+	res := &model.LoginResponse{}
+	var err error
+
+	if c.ShouldBind(&req) == nil {
+		res, err = h.userService.Login(req)
+		if err != nil {
+			c.JSON(401,
+				gin.H{"status": "failed",
+					"errorMessage": err.Error(),
+				})
+			return
+		}
+	} else {
+		c.JSON(401,
+			gin.H{"status": "unable to bind data",
+				"errorMessage": err.Error(),
+			})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+
 }

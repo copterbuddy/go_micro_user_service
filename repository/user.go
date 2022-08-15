@@ -12,4 +12,7 @@ type User struct {
 type UserRepository interface {
 	Create(email string, password string, name string) (*User, error)
 	GetAll() ([]User, error)
+	Login() (*User, error)
+	GetUserByID(userID uint) (*User, error)
+	GetUserByEmail(email string) (*User, error)
 }
