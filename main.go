@@ -19,6 +19,13 @@ import (
 func main() {
 	initConfig()
 
+	r := SetupApi()
+
+	r.Run(fmt.Sprintf(":%v", viper.GetString("app.port")))
+}
+
+func SetupApi() *gin.Engine {
+
 	db = initUserDatabase()
 
 	userRepo := repository.NewUserRepositoryDB(db)
@@ -26,15 +33,8 @@ func main() {
 	userHandler := handler.NewUserHandler(userService)
 
 	r := gin.Default()
-
-	testApi := r.Group("/UserApi")
-	{
-		testApi.GET("/GetAllUser", userHandler.GetAllUser)
-		testApi.POST("/CreateUser", userHandler.CreateUser)
-		testApi.POST("/Login", userHandler.Login)
-	}
-
-	r.Run(fmt.Sprintf(":%v", viper.GetString("app.port")))
+	handler.SetupRouter(r, userHandler)
+	return r
 }
 
 func initConfig() {

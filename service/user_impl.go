@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"main/intercepter"
 	"main/logs"
 	"main/model"
 	"main/repository"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -57,8 +59,6 @@ func (s userService) GetAll() ([]model.UserResponse, error) {
 	return response, nil
 }
 
-const jwtSecret = "mySecret"
-
 func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, err error) {
 
 	user, err := s.userRepo.GetUserByEmail(req.Email)
@@ -67,28 +67,22 @@ func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, er
 		return res, err
 	}
 
-	// passwordEncrypted, err := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
-	// if err != nil {
-	// 	return nil, errors.New("StatusUnprocessableEntity")
-	// }
-
-	// passCompare := string(passwordEncrypted)
-	// if passCompare != user.Password {
-	// 	return res, errors.New("username or password incurrect")
-	// }
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	err = intercepter.CompareHashAndPassword(user.Password, req.Password)
 	if err != nil {
-		return res, errors.New("username or password incurrect")
+		return res, errors.New("username or password incorrect")
 	}
 
-	//TODO: gen token
-	cliams := jwt.StandardClaims{
-		Issuer:    strconv.FormatUint(uint64(user.ID), 10),
-		ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
+	// Create the Claims
+	claims := model.MyCustomClaims{
+		// "bar",
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
+			Issuer:    strconv.FormatUint(uint64(user.ID), 10),
+		},
 	}
 
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, cliams)
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	jwtSecret := viper.GetString("jwt.token_secret")
 	token, err := jwtToken.SignedString([]byte(jwtSecret))
 	if err != nil {
 		return nil, errors.New("unautuorize")
@@ -98,5 +92,6 @@ func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, er
 	res = &model.LoginResponse{
 		Token: token,
 	}
+
 	return res, nil
 }

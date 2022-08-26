@@ -14,13 +14,11 @@ func Test_User_GetAll_Success(t *testing.T) {
 	//Arrange
 	testcase_success := []repository.User{
 		{
-			// Id:       1,
 			Email:    "cop1@test.com",
 			Password: "1234",
 			Name:     "Cop1",
 		},
 		{
-			// Id:       2,
 			Email:    "cop2@test.com",
 			Password: "1234",
 			Name:     "Cop2",

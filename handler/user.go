@@ -1,87 +1,13 @@
 package handler
 
 import (
-	"main/logs"
-	"main/model"
-	"main/service"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
 type UserHandler interface {
+	Ping(c *gin.Context)
 	GetAllUser(c *gin.Context)
 	CreateUser(c *gin.Context)
 	Login(c *gin.Context)
-}
-
-type userHandler struct {
-	userService service.UserService
-}
-
-func NewUserHandler(userService service.UserService) UserHandler {
-	return userHandler{userService: userService}
-}
-
-//http://localhost:8000/UserApi/GetAllUser
-func (h userHandler) GetAllUser(c *gin.Context) {
-
-	users, err := h.userService.GetAll()
-	if err != nil {
-		logs.Error(err)
-		c.JSON(http.StatusExpectationFailed, "expected error")
-		return
-	}
-
-	c.JSON(http.StatusOK, users)
-}
-
-//http://localhost:8000/UserApi/CreateUser
-func (h userHandler) CreateUser(c *gin.Context) {
-
-	req := model.CreateUserRequest{}
-	res := &model.UserResponse{}
-	var err error
-
-	if c.ShouldBind(&req) == nil {
-
-		res, err = h.userService.Create(req.Email, req.Password, req.Name)
-		if err != nil {
-			logs.Error(err)
-			c.JSON(401, gin.H{"status": "cannot create"})
-			return
-		}
-	} else {
-		c.JSON(401, gin.H{"status": "unable to bind data"})
-		return
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-func (h userHandler) Login(c *gin.Context) {
-
-	req := model.LoginRequest{}
-	res := &model.LoginResponse{}
-	var err error
-
-	if c.ShouldBind(&req) == nil {
-		res, err = h.userService.Login(req)
-		if err != nil {
-			c.JSON(401,
-				gin.H{"status": "failed",
-					"errorMessage": err.Error(),
-				})
-			return
-		}
-	} else {
-		c.JSON(401,
-			gin.H{"status": "unable to bind data",
-				"errorMessage": err.Error(),
-			})
-		return
-	}
-
-	c.JSON(http.StatusOK, res)
-
+	GetUserProfile(c *gin.Context)
 }

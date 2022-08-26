@@ -7,3 +7,6 @@ db:
   username: root
   password: P@ssw0rd
   database: user_db
+
+jwt:
+  token_secret: "copSecret"

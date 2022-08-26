@@ -1,3 +1,7 @@
+### ping
+
+GET http://localhost:8080/UserApi/ping
+
 ### GetAllUser
 
 GET http://localhost:8080/UserApi/GetAllUser
@@ -22,3 +26,8 @@ Content-Type: application/json
     "email":"cop1@test.com",
     "password":"1234"
 }
+
+### GetUserProfile
+
+POST  http://localhost:8080/UserService/GetUserProfile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE1Mjk1MjMsImlzcyI6IjUifQ.McyPXyXUSqMJGWojZJA6isG7XLEryfk-rXEv_Gf8wr4
