@@ -1,12 +1,46 @@
 version: '3.9'
+
 services:
   user_db:
-    image: mysql:8.0.30
-    container_name: mysql
+    image: postgres:alpine3.16
+    container_name: postgres
+    restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=P@ssw0rd
-      - MYSQL_DATABASE=user_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: P@ssw0rd
+      POSTGRES_DB: user_db
     ports:
-      - 3306:3306
+      - 5432:5432
     volumes:
-      - ./data/mysql:/var/lib/mysql
+      - ./data/postgresql:/var/lib/postgresql/data
+    networks:
+      - pgsite
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'root@admin.com'
+      PGADMIN_DEFAULT_PASSWORD: 'password'
+    ports:
+      - 5000:80
+    volumes:
+      - ./data/pgadmin4:/var/lib/pgadmin
+    depends_on:
+      - user_db
+    networks:
+      - pgsite
+
+networks:
+  pgsite:
+    # user_db:
+    # image: mysql:8.0.30
+    # container_name: mysql
+    # environment:
+    #   - MYSQL_ROOT_PASSWORD=P@ssw0rd
+    #   - MYSQL_DATABASE=user_db
+    # ports:
+    #   - 3306:3306
+    # volumes:
+    #   - ./data/mysql:/var/lib/mysql

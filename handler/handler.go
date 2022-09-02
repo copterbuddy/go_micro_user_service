@@ -22,17 +22,17 @@ func SetupRouter(r *gin.Engine, handlers ...interface{}) {
 		}
 	}
 
-	router := r.Group("/UserApi")
+	router1 := r.Group("/UserService")
 	{
-		router.GET("/GetAllUser", userHandler.GetAllUser)
-		router.POST("/CreateUser", userHandler.CreateUser)
-		router.POST("/Login", userHandler.Login)
-		router.GET("/ping", userHandler.Ping)
+		router1.POST("/CreateUser", userHandler.CreateUser)
+		router1.POST("/Login", userHandler.Login)
+		router1.GET("/ping", userHandler.Ping)
 	}
 
-	router1 := r.Group("/UserService")
-	router1.Use(intercepter.GeneralInterceptor)
+	router2 := r.Group("/UserService")
+	router2.Use(intercepter.GeneralInterceptor)
 	{
-		router1.POST("/GetUserProfile", userHandler.GetUserProfile)
+		router2.POST("/GetUserProfile", userHandler.GetUserProfile)
+		router2.GET("/GetAllUser", userHandler.GetAllUser)
 	}
 }

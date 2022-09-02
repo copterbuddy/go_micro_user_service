@@ -1,10 +1,12 @@
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE4NzEzNjcsImlzcyI6IjIifQ.1rR_T4R9bLNwUVM8J8ZxVBnvjwLMUHzVyse__3--xYw
 ### ping
 
-GET http://localhost:8080/UserApi/ping
+GET http://localhost:8080/UserService/ping
 
 ### GetAllUser
 
-GET http://localhost:8080/UserApi/GetAllUser
+GET http://localhost:8080/UserService/GetAllUser
+Authorization: Bearer {{token}}
 
 ### CreateUser
 
@@ -19,7 +21,7 @@ Content-Type: application/json
 
 ### Login
 
-POST  http://localhost:8080/UserApi/Login
+POST  http://localhost:8080/UserService/Login
 Content-Type: application/json
 
 {
@@ -30,4 +32,4 @@ Content-Type: application/json
 ### GetUserProfile
 
 POST  http://localhost:8080/UserService/GetUserProfile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjE1Mjk1MjMsImlzcyI6IjUifQ.McyPXyXUSqMJGWojZJA6isG7XLEryfk-rXEv_Gf8wr4
+Authorization: Bearer {{token}}

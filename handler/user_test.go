@@ -15,26 +15,29 @@ import (
 
 func Test_ping_Success(t *testing.T) {
 
-	//Arrange
-	gin.SetMode(gin.TestMode)
+	t.Run("PingSuccesss", func(t *testing.T) {
+		//Arrange
+		gin.SetMode(gin.TestMode)
 
-	userService := service.NewUserServiceMock()
-	userHandler := handler.NewUserHandler(userService)
+		userService := service.NewUserServiceMock()
+		userHandler := handler.NewUserHandler(userService)
 
-	r := gin.Default()
-	router := r.Group("/UserApi").GET("/ping", userHandler.Ping)
-	{
-		router.GET("/ping", userHandler.Ping)
-	}
-	res := httptest.NewRecorder()
+		r := gin.Default()
+		router := r.Group("/UserService")
+		{
+			router.GET("/ping", userHandler.Ping)
+		}
+		res := httptest.NewRecorder()
 
-	//Act
-	req, _ := http.NewRequest("GET", "/UserApi/ping", nil)
-	r.ServeHTTP(res, req)
+		//Act
+		req, _ := http.NewRequest("GET", "/UserService/ping", nil)
+		r.ServeHTTP(res, req)
 
-	//Asset
-	assert.Equal(t, http.StatusOK, res.Code)
-	assert.Equal(t, "pong", res.Body.String())
+		//Asset
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, "pong", res.Body.String())
+
+	})
 }
 
 func Test_User_GetallUser_Success(t *testing.T) {
@@ -52,9 +55,9 @@ func Test_User_GetallUser_Success(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	// Arrange
 	t.Run("SuccessCase", func(t *testing.T) {
 
+		// Arrange
 		userService := service.NewUserServiceMock()
 		userService.On("GetAll").Return(want, nil)
 
@@ -62,14 +65,14 @@ func Test_User_GetallUser_Success(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		router := r.Group("/UserApi")
+		router := r.Group("/UserService")
 		{
 			router.GET("/GetAllUser", userHandler.GetAllUser)
 		}
 		res := httptest.NewRecorder()
 
 		// Act
-		req, _ := http.NewRequest("GET", "/UserApi/GetAllUser", nil)
+		req, _ := http.NewRequest("GET", "/UserService/GetAllUser", nil)
 		r.ServeHTTP(res, req)
 
 		// Assert
@@ -92,6 +95,7 @@ func Test_User_GetUserProfile_Success(t *testing.T) {
 	_ = give
 
 	want := model.UserResponse{
+
 		Email: "cop1@test.com",
 		Name:  "Cop1",
 	}
@@ -108,11 +112,11 @@ func Test_User_GetUserProfile_Success(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/GetUserProfile", userHandler.GetAllUser)
+		r.GET("/UserService/GetUserProfile", userHandler.GetAllUser)
 		w := httptest.NewRecorder()
 
 		// Act
-		req, _ := http.NewRequest("GET", "/UserApi/GetUserProfile", nil)
+		req, _ := http.NewRequest("GET", "/UserService/GetUserProfile", nil)
 		r.ServeHTTP(w, req)
 
 		// Assert

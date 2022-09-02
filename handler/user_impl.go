@@ -18,12 +18,12 @@ func NewUserHandler(userService service.UserService) UserHandler {
 	return userHandler{userService: userService}
 }
 
-//http://localhost:8000/UserApi/Ping
+//http://localhost:8000/UserService/Ping
 func (h userHandler) Ping(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
 }
 
-//http://localhost:8000/UserApi/GetAllUser
+//http://localhost:8000/UserService/GetAllUser
 func (h userHandler) GetAllUser(c *gin.Context) {
 
 	users, err := h.userService.GetAll()
@@ -37,7 +37,7 @@ func (h userHandler) GetAllUser(c *gin.Context) {
 	return
 }
 
-//http://localhost:8000/UserApi/CreateUser
+//http://localhost:8000/UserService/CreateUser
 func (h userHandler) CreateUser(c *gin.Context) {
 
 	req := model.CreateUserRequest{}
@@ -86,8 +86,19 @@ func (h userHandler) Login(c *gin.Context) {
 
 }
 
-//http://localhost:8000/UserApi/GetUserProfile
+//http://localhost:8000/UserService/GetUserProfile
 func (h userHandler) GetUserProfile(c *gin.Context) {
 	fmt.Println(c.Request.Header["Authorization"])
+	issuer, ok := c.Get("Issuer")
+	if ok == false {
+		c.JSON(401,
+			gin.H{"status": "unable to bind data",
+				"errorMessage": "unauthorize",
+			})
+		return
+	}
+
+	fmt.Println(issuer)
+
 	c.String(http.StatusOK, "pong")
 }

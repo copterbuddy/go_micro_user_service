@@ -11,7 +11,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"gorm.io/driver/mysql"
+
+	"gorm.io/driver/postgres"
+
+	// "gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -26,7 +29,7 @@ func main() {
 
 func SetupApi() *gin.Engine {
 
-	db = initUserDatabase()
+	db = initUserDatabasePostgreSql()
 
 	userRepo := repository.NewUserRepositoryDB(db)
 	userService := service.NewUserService(userRepo)
@@ -61,16 +64,15 @@ func (l SqlLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql st
 	fmt.Printf("%v\n==========================================\n", sql)
 }
 
-func initUserDatabase() *gorm.DB {
-	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=true",
+func initUserDatabasePostgreSql() *gorm.DB {
+	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Asia/Bangkok",
+		viper.GetString("db.host"),
 		viper.GetString("db.username"),
 		viper.GetString("db.password"),
-		viper.GetString("db.host"),
-		viper.GetInt("db.port"),
 		viper.GetString("db.database"),
-	)
+		viper.GetInt("db.port"))
 
-	dial := mysql.Open(dsn)
+	dial := postgres.Open(dsn)
 
 	var err error
 	db, err = gorm.Open(dial, &gorm.Config{
@@ -87,3 +89,30 @@ func initUserDatabase() *gorm.DB {
 
 	return db
 }
+
+// func initUserDatabaseMySql() *gorm.DB {
+// 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=true",
+// 		viper.GetString("db.username"),
+// 		viper.GetString("db.password"),
+// 		viper.GetString("db.host"),
+// 		viper.GetInt("db.port"),
+// 		viper.GetString("db.database"),
+// 	)
+
+// 	dial := mysql.Open(dsn)
+
+// 	var err error
+// 	db, err = gorm.Open(dial, &gorm.Config{
+// 		Logger: &SqlLogger{},
+// 		DryRun: false, //ไม่ทำจริงใน db ถ้า true
+// 	})
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	//set timeout
+// 	// db.SetConnMaxLifetime(3 * time.Minute)
+// 	// db.SetMaxOpenConns(10)
+// 	// db.SetMaxIdleConns(10)
+
+// 	return db
+// }
