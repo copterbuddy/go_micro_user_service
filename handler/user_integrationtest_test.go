@@ -18,7 +18,7 @@ import (
 
 func Test_GetAll_Success_Integration(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		want := []model.UserResponse{
+		want := []model.CreateUserResponse{
 			{
 				Email: "cop1@test.com",
 				Name:  "Cop1",
@@ -59,7 +59,7 @@ func Test_GetAll_Success_Integration(t *testing.T) {
 		r.ServeHTTP(res, req)
 
 		//Asset
-		users := []model.UserResponse{}
+		users := []model.CreateUserResponse{}
 		json.Unmarshal(res.Body.Bytes(), &users)
 
 		if !assert.Equal(t, http.StatusOK, res.Result().StatusCode) {

@@ -88,9 +88,9 @@ func (h userHandler) Login(c *gin.Context) {
 
 //http://localhost:8000/UserService/GetUserProfile
 func (h userHandler) GetUserProfile(c *gin.Context) {
-	fmt.Println(c.Request.Header["Authorization"])
 	issuer, ok := c.Get("Issuer")
-	if ok == false {
+
+	if !ok {
 		c.JSON(401,
 			gin.H{"status": "unable to bind data",
 				"errorMessage": "unauthorize",
@@ -98,7 +98,15 @@ func (h userHandler) GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(issuer)
+	// issuerStr = string(issuer)
+	res, err := h.userService.GetUserProfile(fmt.Sprintf("%v", issuer))
+	if err != nil {
+		c.JSON(401,
+			gin.H{"status": "user not found",
+				"errorMessage": err.Error(),
+			})
+		return
+	}
 
-	c.String(http.StatusOK, "pong")
+	c.JSON(http.StatusOK, res)
 }

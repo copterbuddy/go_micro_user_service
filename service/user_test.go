@@ -25,7 +25,7 @@ func Test_User_GetAll_Success(t *testing.T) {
 		},
 	}
 
-	expected_mock := []model.UserResponse{
+	expected_mock := []model.CreateUserResponse{
 		{
 			Email: "cop1@test.com",
 			Name:  "Cop1",

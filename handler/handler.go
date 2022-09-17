@@ -26,7 +26,7 @@ func SetupRouter(r *gin.Engine, handlers ...interface{}) {
 	{
 		router1.POST("/CreateUser", userHandler.CreateUser)
 		router1.POST("/Login", userHandler.Login)
-		router1.GET("/ping", userHandler.Ping)
+		router1.GET("/Ping", userHandler.Ping)
 	}
 
 	router2 := r.Group("/UserService")

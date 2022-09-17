@@ -22,7 +22,7 @@ func NewUserService(userRepo repository.UserRepository) userService {
 	return userService{userRepo: userRepo}
 }
 
-func (s userService) Create(email string, password string, name string) (*model.UserResponse, error) {
+func (s userService) Create(email string, password string, name string) (*model.CreateUserResponse, error) {
 
 	passwordEncrypted, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
@@ -35,22 +35,22 @@ func (s userService) Create(email string, password string, name string) (*model.
 		return nil, err
 	}
 
-	response := &model.UserResponse{
+	response := &model.CreateUserResponse{
 		Email: user.Email,
 		Name:  user.Name,
 	}
 	return response, nil
 }
 
-func (s userService) GetAll() ([]model.UserResponse, error) {
+func (s userService) GetAll() ([]model.CreateUserResponse, error) {
 	users, err := s.userRepo.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	response := []model.UserResponse{}
+	response := []model.CreateUserResponse{}
 	for _, user := range users {
-		item := model.UserResponse{
+		item := model.CreateUserResponse{
 			Email: user.Email,
 			Name:  user.Name,
 		}
@@ -94,4 +94,9 @@ func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, er
 	}
 
 	return res, nil
+}
+
+func (s userService) GetUserProfile(userId string) (user *model.GetUserProfileResponse, err error) {
+
+	return nil, nil
 }

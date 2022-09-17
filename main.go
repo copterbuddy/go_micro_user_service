@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"main/handler"
+	"main/logs"
 	"main/repository"
 	"main/service"
 	"strings"
@@ -35,6 +36,8 @@ func SetupApi() *gin.Engine {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
+	// gin.SetMode(gin.ReleaseMode)
+	// r := gin.New()
 	r := gin.Default()
 	handler.SetupRouter(r, userHandler)
 	return r
@@ -51,6 +54,8 @@ func initConfig() {
 	if err != nil {
 		panic(err)
 	}
+
+	logs.Info(fmt.Sprintf("this is my viper %v", viper.GetString("app.port")))
 }
 
 var db *gorm.DB

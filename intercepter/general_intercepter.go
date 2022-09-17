@@ -25,11 +25,13 @@ func GeneralInterceptor(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	isVerify := JwtVerify(parts[1], c)
-	if !isVerify {
+	userId, isOk := JwtVerify(parts[1])
+	if !isOk || userId == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		c.Abort()
 	}
+
+	c.Set("Issuer", userId)
 
 	c.Next()
 }

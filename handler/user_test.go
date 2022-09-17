@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"main/handler"
 	"main/model"
@@ -13,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_ping_Success(t *testing.T) {
+func Test_User_Ping_Success(t *testing.T) {
 
 	t.Run("PingSuccesss", func(t *testing.T) {
 		//Arrange
@@ -22,15 +23,17 @@ func Test_ping_Success(t *testing.T) {
 		userService := service.NewUserServiceMock()
 		userHandler := handler.NewUserHandler(userService)
 
-		r := gin.Default()
+		res := httptest.NewRecorder()
+		_, r := gin.CreateTestContext(res)
+
 		router := r.Group("/UserService")
 		{
-			router.GET("/ping", userHandler.Ping)
+			router.GET("/Ping", userHandler.Ping)
 		}
-		res := httptest.NewRecorder()
+		// res := httptest.NewRecorder()
 
 		//Act
-		req, _ := http.NewRequest("GET", "/UserService/ping", nil)
+		req, _ := http.NewRequest("GET", "/UserService/Ping", nil)
 		r.ServeHTTP(res, req)
 
 		//Asset
@@ -40,9 +43,59 @@ func Test_ping_Success(t *testing.T) {
 	})
 }
 
-func Test_User_GetallUser_Success(t *testing.T) {
+func Test_User_Login_Success(t *testing.T) {
 
-	want := []model.UserResponse{
+	t.Run("Successs", func(t *testing.T) {
+		//Arrange
+		gin.SetMode(gin.TestMode)
+
+		given := model.LoginRequest{
+			Email:    "copemail@test.com",
+			Password: "1234",
+		}
+
+		want := &model.LoginResponse{
+			Token: "1234",
+		}
+
+		userService := service.NewUserServiceMock()
+		userHandler := handler.NewUserHandler(userService)
+
+		var loginRequestByte []byte
+		loginRequestByte, err := json.Marshal(given)
+		if err != nil {
+			t.Error(err)
+		}
+
+		res := httptest.NewRecorder()
+		_, r := gin.CreateTestContext(res)
+
+		router := r.Group("/UserService")
+		{
+			router.POST("/Login", userHandler.Login)
+		}
+
+		userService.On("Login").Return(want, nil)
+
+		//Act
+		req, _ := http.NewRequest(http.MethodPost, "/UserService/Login", bytes.NewBuffer(loginRequestByte))
+		req.Header.Set("Content-Type", "application/json")
+		r.ServeHTTP(res, req)
+
+		resStruct := &model.LoginResponse{}
+		json.NewDecoder(res.Body).Decode(&resStruct)
+
+		//Asset
+
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, want, resStruct)
+
+	})
+}
+
+func Test_User_GetAllUser_Success(t *testing.T) {
+
+	want := []model.CreateUserResponse{
 		{
 			Email: "cop1@test.com",
 			Name:  "Cop1",
@@ -64,19 +117,20 @@ func Test_User_GetallUser_Success(t *testing.T) {
 		userHandler := handler.NewUserHandler(userService)
 
 		gin.SetMode(gin.TestMode)
-		r := gin.Default()
-		router := r.Group("/UserService")
-		{
-			router.GET("/GetAllUser", userHandler.GetAllUser)
-		}
 		res := httptest.NewRecorder()
 
+		_, r := gin.CreateTestContext(res)
+
+		{
+			r.POST("/UserService/GetAllUser", userHandler.GetAllUser)
+		}
+
 		// Act
-		req, _ := http.NewRequest("GET", "/UserService/GetAllUser", nil)
+		req, _ := http.NewRequest(http.MethodPost, "/UserService/GetAllUser", nil)
 		r.ServeHTTP(res, req)
 
 		// Assert
-		users := []model.UserResponse{}
+		users := []model.CreateUserResponse{}
 		json.Unmarshal(res.Body.Bytes(), &users)
 
 		if !assert.Equal(t, http.StatusOK, res.Result().StatusCode) {
@@ -91,10 +145,10 @@ func Test_User_GetallUser_Success(t *testing.T) {
 
 func Test_User_GetUserProfile_Success(t *testing.T) {
 
-	give := "cop1@test.com"
-	_ = give
+	given := "cop1@test.com"
+	_ = given
 
-	want := model.UserResponse{
+	want := &model.GetUserProfileResponse{
 
 		Email: "cop1@test.com",
 		Name:  "Cop1",
@@ -111,21 +165,26 @@ func Test_User_GetUserProfile_Success(t *testing.T) {
 		userHandler := handler.NewUserHandler(userService)
 
 		gin.SetMode(gin.TestMode)
-		r := gin.Default()
-		r.GET("/UserService/GetUserProfile", userHandler.GetAllUser)
-		w := httptest.NewRecorder()
+
+		res := httptest.NewRecorder()
+		_, r := gin.CreateTestContext(res)
+		r.Use(func(c *gin.Context) {
+			c.Set("Issuer", "1")
+		})
+
+		r.POST("/UserService/GetUserProfile", userHandler.GetUserProfile)
 
 		// Act
-		req, _ := http.NewRequest("GET", "/UserService/GetUserProfile", nil)
-		r.ServeHTTP(w, req)
+		req, _ := http.NewRequest(http.MethodPost, "/UserService/GetUserProfile", nil)
+		r.ServeHTTP(res, req)
 
 		// Assert
-		users := []model.UserResponse{}
-		json.Unmarshal(w.Body.Bytes(), &users)
+		users := &model.GetUserProfileResponse{}
+		json.Unmarshal(res.Body.Bytes(), &users)
 
-		if !assert.Equal(t, http.StatusOK, w.Result().StatusCode) {
+		if !assert.Equal(t, http.StatusOK, res.Result().StatusCode) {
 			t.Errorf("handler returned wrong status code: got %v want %v",
-				w.Result().StatusCode, http.StatusOK)
+				res.Result().StatusCode, http.StatusOK)
 		}
 
 		assert.Equal(t, want, users)

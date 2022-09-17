@@ -13,27 +13,6 @@ services:
       - 5432:5432
     volumes:
       - ./data/postgresql:/var/lib/postgresql/data
-    networks:
-      - pgsite
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: 'root@admin.com'
-      PGADMIN_DEFAULT_PASSWORD: 'password'
-    ports:
-      - 5000:80
-    volumes:
-      - ./data/pgadmin4:/var/lib/pgadmin
-    depends_on:
-      - user_db
-    networks:
-      - pgsite
-
-networks:
-  pgsite:
     # user_db:
     # image: mysql:8.0.30
     # container_name: mysql
