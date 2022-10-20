@@ -91,6 +91,7 @@ func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, er
 
 	res = &model.LoginResponse{
 		Token: token,
+		Name:  user.Name,
 	}
 
 	return res, nil

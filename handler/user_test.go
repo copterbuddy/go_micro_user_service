@@ -55,7 +55,7 @@ func Test_User_Login_Success(t *testing.T) {
 		}
 
 		want := &model.LoginResponse{
-			Token: "1234",
+			Name: "testName",
 		}
 
 		userService := service.NewUserServiceMock()
@@ -82,13 +82,14 @@ func Test_User_Login_Success(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 		r.ServeHTTP(res, req)
 
-		resStruct := &model.LoginResponse{}
-		json.NewDecoder(res.Body).Decode(&resStruct)
+		// resStruct := &model.LoginResponse{}
+		name := ""
+		json.NewDecoder(res.Body).Decode(&name)
 
 		//Asset
 
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, want, resStruct)
+		assert.Equal(t, want.Name, name)
 
 	})
 }

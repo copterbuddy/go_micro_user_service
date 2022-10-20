@@ -74,7 +74,8 @@ func (h userHandler) Login(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, res)
+		c.SetCookie("butterfly_cookie", res.Token, 10, "/", "localhost:8080", true, true)
+		c.JSON(http.StatusOK, res.Name)
 		return
 	} else {
 		c.JSON(401,

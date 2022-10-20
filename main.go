@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 
@@ -39,6 +40,9 @@ func SetupApi() *gin.Engine {
 	// gin.SetMode(gin.ReleaseMode)
 	// r := gin.New()
 	r := gin.Default()
+
+	SetCore(r)
+
 	handler.SetupRouter(r, userHandler)
 	return r
 }
@@ -67,6 +71,22 @@ type SqlLogger struct {
 func (l SqlLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
 	sql, _ := fc()
 	fmt.Printf("%v\n==========================================\n", sql)
+}
+
+func SetCore(r *gin.Engine) {
+	//set core
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000/*"},
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowWildcard:    true,
+		// AllowOriginFunc: func(origin string) bool {
+		// 	return origin == "https://github.com"
+		// },
+		MaxAge: 12 * time.Hour,
+	}))
 }
 
 func initUserDatabasePostgreSql() *gorm.DB {
