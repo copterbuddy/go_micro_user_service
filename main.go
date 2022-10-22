@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"main/handler"
-	"main/logs"
 	"main/repository"
 	"main/service"
 	"strings"
@@ -59,7 +58,7 @@ func initConfig() {
 		panic(err)
 	}
 
-	logs.Info(fmt.Sprintf("this is my viper %v", viper.GetString("app.port")))
+	// logs.Info(fmt.Sprintf("this is my viper %v", viper.GetString("db.host")))
 }
 
 var db *gorm.DB
