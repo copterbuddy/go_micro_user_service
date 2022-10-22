@@ -10,4 +10,5 @@ type UserHandler interface {
 	CreateUser(c *gin.Context)
 	Login(c *gin.Context)
 	GetUserProfile(c *gin.Context)
+	TestCallService(c *gin.Context)
 }

@@ -38,3 +38,7 @@ Authorization: Bearer {{token}}
 
 GET  http://localhost:8080/UserService/GetAllUser
 Authorization: Bearer {{token}}
+
+### TestCallService
+
+GET  http://localhost:8080/UserService/TestCallService

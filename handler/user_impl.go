@@ -2,10 +2,12 @@ package handler
 
 import (
 	"fmt"
+	"io/ioutil"
 	"main/logs"
 	"main/model"
 	"main/service"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,12 +20,12 @@ func NewUserHandler(userService service.UserService) UserHandler {
 	return userHandler{userService: userService}
 }
 
-//http://localhost:8000/UserService/Ping
+//http://localhost:8080/UserService/Ping
 func (h userHandler) Ping(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
 }
 
-//http://localhost:8000/UserService/GetAllUser
+//http://localhost:8080/UserService/GetAllUser
 func (h userHandler) GetAllUser(c *gin.Context) {
 
 	users, err := h.userService.GetAll()
@@ -37,7 +39,7 @@ func (h userHandler) GetAllUser(c *gin.Context) {
 	return
 }
 
-//http://localhost:8000/UserService/CreateUser
+//http://localhost:8080/UserService/CreateUser
 func (h userHandler) CreateUser(c *gin.Context) {
 
 	req := model.CreateUserRequest{}
@@ -87,7 +89,7 @@ func (h userHandler) Login(c *gin.Context) {
 
 }
 
-//http://localhost:8000/UserService/GetUserProfile
+//http://localhost:8080/UserService/GetUserProfile
 func (h userHandler) GetUserProfile(c *gin.Context) {
 	issuer, ok := c.Get("Issuer")
 
@@ -110,4 +112,22 @@ func (h userHandler) GetUserProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+//http://localhost:8080/UserService/TestCallService
+func (h userHandler) TestCallService(c *gin.Context) {
+
+	ctx := http.Client{Timeout: time.Duration(1) * time.Second}
+	resp, err := ctx.Get("http://localhost:8080/UserService/Ping")
+	if err != nil {
+		fmt.Printf("Error is %s", err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Printf("Error is %s", err)
+	}
+
+	c.JSON(http.StatusOK, body)
 }
