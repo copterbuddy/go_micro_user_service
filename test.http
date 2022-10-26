@@ -1,4 +1,9 @@
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjM0MTUyMzYsImlzcyI6IjEifQ.KVuoxjzFRIG6VMdyU6rVpSs4A8kP2UORzJ2BCiUtGfU
+
+### appVersion
+
+GET  http://localhost:8080/
+
 ### ping
 
 GET http://localhost:8080/UserService/Ping

@@ -1,9 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"main/intercepter"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func SetupRouter(r *gin.Engine, handlers ...interface{}) {
@@ -21,6 +24,11 @@ func SetupRouter(r *gin.Engine, handlers ...interface{}) {
 
 		}
 	}
+
+	appVersion := viper.GetString("app.version")
+	r.GET("", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, fmt.Sprintf("app running in version : %v", appVersion))
+	})
 
 	router1 := r.Group("/UserService")
 	{
