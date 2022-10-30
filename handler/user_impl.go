@@ -7,6 +7,7 @@ import (
 	"main/model"
 	"main/service"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -91,7 +92,7 @@ func (h userHandler) Login(c *gin.Context) {
 
 //http://localhost:8080/UserService/GetUserProfile
 func (h userHandler) GetUserProfile(c *gin.Context) {
-	issuer, ok := c.Get("Issuer")
+	userIdContext, ok := c.Get("userId")
 
 	if !ok {
 		c.JSON(401,
@@ -101,8 +102,17 @@ func (h userHandler) GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	// issuerStr = string(issuer)
-	res, err := h.userService.GetUserProfile(fmt.Sprintf("%v", issuer))
+	userIdString := fmt.Sprintf("%v", userIdContext)
+	userId, err := strconv.Atoi(userIdString)
+	if err != nil {
+		c.JSON(401,
+			gin.H{"status": "unexpected error",
+				"errorMessage": err.Error(),
+			})
+		return
+	}
+
+	res, err := h.userService.GetUserProfile(userId)
 	if err != nil {
 		c.JSON(401,
 			gin.H{"status": "user not found",

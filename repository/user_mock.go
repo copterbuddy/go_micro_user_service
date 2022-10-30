@@ -27,7 +27,7 @@ func (m *userRepositoryMock) Login() (*User, error) {
 	return args.Get(0).(*User), args.Error(1)
 }
 
-func (m *userRepositoryMock) GetUserByID(userID uint) (*User, error) {
+func (m *userRepositoryMock) GetUserByID(userID int) (*User, error) {
 	args := m.Called()
 	return args.Get(0).(*User), args.Error(1)
 }

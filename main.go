@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"main/handler"
+	"main/intercepter"
 	"main/repository"
 	"main/service"
 	"strings"
@@ -36,13 +37,14 @@ func SetupApi() *gin.Engine {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
-	// gin.SetMode(gin.ReleaseMode)
-	// r := gin.New()
-	r := gin.Default()
+	intercepter := intercepter.NewInterceptor()
+
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
 
 	SetCore(r)
 
-	handler.SetupRouter(r, userHandler)
+	handler.SetupRouter(r, userHandler, intercepter)
 	return r
 }
 
@@ -58,7 +60,7 @@ func initConfig() {
 		panic(err)
 	}
 
-	// logs.Info(fmt.Sprintf("this is my viper %v", viper.GetString("db.host")))
+	// logs.Info(fmt.Sprintf("this is my viper %v", viper.GetString("app.port")))
 }
 
 var db *gorm.DB

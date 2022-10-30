@@ -32,7 +32,7 @@ func (r userRepositoryDB) Create(email string, password string, name string) (*U
 		return nil, tx.Error
 	}
 
-	id := user.ID
+	id := int(user.ID)
 
 	user, err := r.GetUserByID(id)
 	if err != nil {
@@ -65,10 +65,10 @@ func (r userRepositoryDB) Login() (*User, error) {
 	return nil, nil
 }
 
-func (r userRepositoryDB) GetUserByID(userID uint) (*User, error) {
+func (r userRepositoryDB) GetUserByID(userID int) (*User, error) {
 
 	user := &User{}
-	tx := r.db.First(user, userID)
+	tx := r.db.First(user, uint(userID))
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

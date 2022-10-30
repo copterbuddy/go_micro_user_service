@@ -6,7 +6,6 @@ import (
 	"main/logs"
 	"main/model"
 	"main/repository"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -67,6 +66,8 @@ func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, er
 		return res, err
 	}
 
+	intercepter := intercepter.NewInterceptor()
+
 	err = intercepter.CompareHashAndPassword(user.Password, req.Password)
 	if err != nil {
 		return res, errors.New("username or password incorrect")
@@ -77,8 +78,8 @@ func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, er
 		// "bar",
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
-			Issuer:    strconv.FormatUint(uint64(user.ID), 10),
 		},
+		UserId: int(user.ID),
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -97,7 +98,16 @@ func (s userService) Login(req model.LoginRequest) (res *model.LoginResponse, er
 	return res, nil
 }
 
-func (s userService) GetUserProfile(userId string) (user *model.GetUserProfileResponse, err error) {
+func (s userService) GetUserProfile(userId int) (user *model.GetUserProfileResponse, err error) {
 
-	return nil, nil
+	userResponse, err := s.userRepo.GetUserByID(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	response := model.GetUserProfileResponse{
+		Email: userResponse.Email,
+		Name:  userResponse.Name,
+	}
+	return &response, nil
 }

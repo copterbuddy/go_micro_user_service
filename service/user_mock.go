@@ -29,7 +29,7 @@ func (m *userServiceMock) Login(model.LoginRequest) (res *model.LoginResponse, e
 	return args.Get(0).(*model.LoginResponse), args.Error(1)
 }
 
-func (m *userServiceMock) GetUserProfile(userId string) (user *model.GetUserProfileResponse, err error) {
+func (m *userServiceMock) GetUserProfile(userId int) (user *model.GetUserProfileResponse, err error) {
 	args := m.Called()
 	return args.Get(0).(*model.GetUserProfileResponse), args.Error(1)
 }

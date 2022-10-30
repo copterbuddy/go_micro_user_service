@@ -170,7 +170,7 @@ func Test_User_GetUserProfile_Success(t *testing.T) {
 		res := httptest.NewRecorder()
 		_, r := gin.CreateTestContext(res)
 		r.Use(func(c *gin.Context) {
-			c.Set("Issuer", "1")
+			c.Set("userId", "1")
 		})
 
 		r.POST("/UserService/GetUserProfile", userHandler.GetUserProfile)

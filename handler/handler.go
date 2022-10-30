@@ -9,19 +9,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SetupRouter(r *gin.Engine, handlers ...interface{}) {
+func SetupRouter(r *gin.Engine, services ...interface{}) {
 
 	var userHandler UserHandler
+	var intercepterService intercepter.Intercepter
 
-	if handlers == nil {
-		panic("handler nil")
+	if services == nil {
+		panic("services nil")
 	}
 
-	for _, handler := range handlers {
-		switch v := handler.(type) {
+	for _, service := range services {
+		switch item := service.(type) {
 		case UserHandler:
-			userHandler = v
-
+			userHandler = item
+		case intercepter.Intercepter:
+			intercepterService = item
 		}
 	}
 
@@ -39,7 +41,7 @@ func SetupRouter(r *gin.Engine, handlers ...interface{}) {
 	}
 
 	router2 := r.Group("/UserService")
-	router2.Use(intercepter.GeneralInterceptor)
+	router2.Use(intercepterService.GeneralInterceptor)
 	{
 		router2.POST("/GetUserProfile", userHandler.GetUserProfile)
 		router2.GET("/GetAllUser", userHandler.GetAllUser)
