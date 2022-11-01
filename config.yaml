@@ -3,6 +3,7 @@ app:
   version: 1.4
 
 db:
+  # host: host.docker.internal #for test with container and container
   host: localhost
   port: 5432
   username: root

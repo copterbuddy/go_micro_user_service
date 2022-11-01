@@ -1,3 +1,6 @@
+### Go Doc
+    go install golang.org/x/tools/cmd/godoc@latest
+
 ### Config for test
     "go.toolsManagement.autoUpdate": true,
     "go.coverOnSave": true,

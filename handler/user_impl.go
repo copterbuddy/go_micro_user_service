@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 type userHandler struct {
@@ -23,7 +24,7 @@ func NewUserHandler(userService service.UserService) UserHandler {
 
 //http://localhost:8080/UserService/Ping
 func (h userHandler) Ping(c *gin.Context) {
-	c.String(http.StatusOK, "pong")
+	c.String(http.StatusOK, fmt.Sprintf("service v.%v is running", viper.GetString("app.version")))
 }
 
 //http://localhost:8080/UserService/GetAllUser
